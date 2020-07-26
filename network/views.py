@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Post, Follower
+from .models import User, Post
 
 
 def index(request):
@@ -84,8 +84,14 @@ def newPost(request):
 def profile(request):
     pass
 '''
-    currentUsr = User.objects.all()
-    Post.objects.all()
+Profile Page: 
+- Display the number of followers the user has, as well as the number of people that the user follows.
+- Display all of the posts for that user, in reverse chronological order.
+- For any other user who is signed in, this page should also display a “Follow” or “Unfollow” button that will let the current user toggle whether or not they are following this user’s posts. Note that this only applies to any “other” user: a user should not be able to follow themselves.
 '''
+'''
+    usrCurrent = User.objects.get(username=request.user.username)
+    usrAll = User.objects.all()
+    userFollows = Follower.objects.get()
 
-
+'''
