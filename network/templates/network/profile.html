@@ -1,0 +1,14 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class=bordered>
+	<h2>All posts</h2>
+	{% if posts is not None %}
+	<ul>
+	{% for p in posts %}
+		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+textarea {
+	width: 50%;
+	height: 80px;
+}
+small {
+	font-size: 0.7em;
+}
+
+.body {
+	margin: 0 1em;
+}
+
+.bordered {
+	padding: 0.5em;
+	margin: 3px;
+	border: 1px solid gray;
+}

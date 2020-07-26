@@ -1,5 +1,25 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+<div class=bordered>
+	<h2 style="display: inline">New post</h2>&nbsp;&nbsp;(280 characters max.)
+    <form action="{% url 'newPost' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+        	<textarea name="content"></textarea>
+
+        </div>
+        <input class="btn btn-primary" type="submit" value="Post">
+    </form>
+</div>
+<div class=bordered>
+	<h2>All posts</h2>
+	{% if posts is not None %}
+	<ul>
+	{% for p in posts %}
+		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+</div>
 {% endblock %}

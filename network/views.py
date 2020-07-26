@@ -4,12 +4,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post, Follower
 
 
 def index(request):
-    return render(request, "network/index.html")
-
+    if request.user.is_authenticated:
+        return render(request, "network/index.html",{
+            "posts": Post.objects.all()
+        })
+    else:
+        return HttpResponseRedirect(reverse("login"))
 
 def login_view(request):
     if request.method == "POST":
@@ -61,3 +65,27 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def newPost(request):
+    post = Post()
+    try:
+        usr = User.objects.get(username=request.user.username)
+    except KeyError:
+        return render(request, "network/error.html", {"message": "User not found"})
+    except User.DoesNotExist:
+        return render(request, "network/error.html", {"message": "User not found"})
+    post.author = usr
+    # post.datetime = set by defaul
+    post.content = request.POST["content"]
+    # totallikes = (default=0)
+    post.save()
+    return HttpResponseRedirect(reverse("index"))
+
+def profile(request):
+    pass
+'''
+    currentUsr = User.objects.all()
+    Post.objects.all()
+'''
+
+
