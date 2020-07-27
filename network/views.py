@@ -82,16 +82,38 @@ def newPost(request):
     return HttpResponseRedirect(reverse("index"))
 
 def profile(request):
-    pass
-'''
-Profile Page: 
-- Display the number of followers the user has, as well as the number of people that the user follows.
-- Display all of the posts for that user, in reverse chronological order.
-- For any other user who is signed in, this page should also display a “Follow” or “Unfollow” button that will let the current user toggle whether or not they are following this user’s posts. Note that this only applies to any “other” user: a user should not be able to follow themselves.
-'''
-'''
-    usrCurrent = User.objects.get(username=request.user.username)
-    usrAll = User.objects.all()
-    userFollows = Follower.objects.get()
-
-'''
+    '''
+    Profile Page: 
+    - Display the number of followers the user has, as well as the number of people that the user follows.
+    - Display all of the posts for that user, in reverse chronological order.
+    - For any other user who is signed in, this page should also display a “Follow” or “Unfollow” button that will let the current user toggle whether or not they are following this user’s posts. Note that this only applies to any “other” user: a user should not be able to follow themselves.
+    '''
+    if request.method == "GET":
+        # Display info
+        usrCurrent = User.objects.get(username=request.user.username) # Get current user objet
+        usrAll = User.objects.exclude(username= request.user.username) # Get users list, without current user
+        numFollowers = usrCurrent.user_set.all().count() # Get number of followers of current user
+        followed = usrCurrent.follows.all()
+        numFollowed = followed.count() # Get number of users the current user follows
+        posts = sorted(Post.objects.filter (author=usrCurrent), key=lambda x: x.datetime, reverse=True) # Get posts of current user; first the recentest
+        return render(request, "network/profile.html", {
+            "usrCurrent": usrCurrent,
+            "usrAll": usrAll,
+            "numFollowers": numFollowers,
+            "numFollowed": numFollowed,
+            "followed": list(followed),
+            "posts": posts
+        })
+    else:
+        # Update followed list
+        usrCurrent = User.objects.get(username=request.POST["usrCurrent"])
+        followedList = request.POST.getlist('followed',None)
+        if followedList is not None:
+            # First clear the followed list 
+            usrCurrent.follows.clear()
+            # Now recreate the followed list 
+            for username in followedList:
+                usr = User.objects.get(username=username)
+                usrCurrent.follows.add(usr)
+            usrCurrent.save()
+        return HttpResponseRedirect(reverse("profile"))

@@ -1,14 +1,55 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<div class=bordered>
-	<h2>All posts</h2>
-	{% if posts is not None %}
-	<ul>
-	{% for p in posts %}
-		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
-	{% endfor %}
-	</ul>
-	{% endif %}
+<div class="row">
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-6">
+		<div class="bordered">
+			<h2>Profile</h2>
+			<div class="form-group">
+				<strong>Username:</strong> {{ usrCurrent.username }}<br>
+				<strong>Num Followers:</strong> {{ numFollowers }}<br>
+				<strong>Num Followed:</strong>  {{ numFollowed }}
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-6">
+		<div class="bordered">
+			<h2>Users you follow</h2>
+			<form action="{% url 'profile' %}" method="post">
+        		{% csrf_token %}
+        		<div class="form-group">
+				{% if usrAll is not None %}
+				{% for u in usrAll %}
+					<input type="checkbox" id="{{ u.username }} " name="followed" value="{{ u.username }}" {% if u in followed %}checked{% endif %}>
+					<label for="u.username">{{ u.username }} ({{ u.email }})</label><br>
+				{% endfor %}
+				{% endif %}
+		        </div>
+        		<input class="btn btn-primary" type="submit" value="Update list">
+        		<input name ="usrCurrent" value="{{ usrCurrent.username }}" hidden>
+		    </form>
+		    <h3>Followed</h3>
+			{% for u in followed %}
+		    <ul>
+		    	<li>{{u.username}}</li>
+		    </ul>
+		    {% endfor %}
+		</div>
+	</div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-lg-12">
+		<div class="bordered">
+			{% if posts is not None %}
+			<h2>Current user posts</h2>
+			<ul>
+			{% for p in posts %}
+				<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
+			{% endfor %}
+			</ul>
+			{% endif %}
+		</div>
+	</div>
+</div>
+
 {% endblock %}
