@@ -4,14 +4,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
+CONST_linesPerPage = 10
 
 def index(request):
     if request.user.is_authenticated:
+        post = Post.objects.all()
+        paginator = Paginator(post, CONST_linesPerPage) # Show  CONST_linesPerPage libes per page.
         return render(request, "network/index.html",{
-            "posts": Post.objects.all()
+            "page_obj": paginator.get_page(request.GET.get('page')),
+            "numpages_plus_one": paginator.num_pages+1
         })
     else:
         return HttpResponseRedirect(reverse("login"))
@@ -125,6 +130,9 @@ def following(request):
     usrCurrent = User.objects.get(username=request.user.username) # Get current user object
     following = usrCurrent.follows.all() # List of people the current user is following
     followingPosts = Post.objects.filter (author__in=following).order_by(F('datetime').asc()) # Get the posts from people user is following
+
+    paginator = Paginator(followingPosts, CONST_linesPerPage) # Show CONST_linesPerPage lines per page.
     return render(request, "network/following.html",{
-        "posts": followingPosts
+        "page_obj": paginator.get_page(request.GET.get('page')),
+        "numpages_plus_one": paginator.num_pages+1
     })

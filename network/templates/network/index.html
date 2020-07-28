@@ -1,5 +1,7 @@
 {% extends "network/layout.html" %}
 
+{% load range %}
+
 {% block body %}
 <div class=bordered>
 	<h2 style="display: inline">New post</h2>&nbsp;&nbsp;(280 characters max.)
@@ -14,12 +16,37 @@
 </div>
 <div class=bordered>
 	<h2>All posts</h2>
-	{% if posts is not None %}
+	
+	<nav aria-label="post navigation all">
+	  <ul class="pagination">
+	  	{% if page_obj.has_previous %}
+	    <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+	    {% else %}
+	    <li class="page-item disabled"> <span class="page-link">Previous</span></li>
+	    {% endif %}
+	    {% for k in 1|range:numpages_plus_one %}
+	  	    {% if k == page_obj.number %}
+		    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ k }}<span class="sr-only">(current)</span></a></li>
+		    {% else %}
+		    <li class="page-item"><a class="page-link" href="?page={{ k }}">{{ k }}</a></li>
+		    {% endif %}
+	    {% endfor %}
+        {% if page_obj.has_next %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><span class="page-link">Next</span></a></li>
+	    {% endif %}
+	  </ul>
+	</nav>	
+
+	{% if page_obj %}
 	<ul>
-	{% for p in posts %}
+	{% for p in page_obj %}
 		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
 	{% endfor %}
 	</ul>
+	{% else %}
+	<strong>There are not posts.</strong>
 	{% endif %}
 </div>
 {% endblock %}
