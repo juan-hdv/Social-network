@@ -1,8 +1,9 @@
-from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
 
 from .models import User, Post
 
@@ -90,12 +91,13 @@ def profile(request):
     '''
     if request.method == "GET":
         # Display info
-        usrCurrent = User.objects.get(username=request.user.username) # Get current user objet
-        usrAll = User.objects.exclude(username= request.user.username) # Get users list, without current user
+        usrCurrent = User.objects.get(username=request.user.username) # Get current user object
+        usrAll = User.objects.exclude(username=request.user.username) # Get users list, without current user
+        # usrCurrent.follows is the list of people the user follows / usrCurrent.user_set is the list of people followinh the user
         numFollowers = usrCurrent.user_set.all().count() # Get number of followers of current user
         followed = usrCurrent.follows.all()
         numFollowed = followed.count() # Get number of users the current user follows
-        posts = sorted(Post.objects.filter (author=usrCurrent), key=lambda x: x.datetime, reverse=True) # Get posts of current user; first the recentest
+        posts = Post.objects.filter (author=usrCurrent).order_by(F('datetime').desc()) # Get posts of current user; first the recentest        
         return render(request, "network/profile.html", {
             "usrCurrent": usrCurrent,
             "usrAll": usrAll,
@@ -117,3 +119,12 @@ def profile(request):
                 usrCurrent.follows.add(usr)
             usrCurrent.save()
         return HttpResponseRedirect(reverse("profile"))
+
+
+def following(request):
+    usrCurrent = User.objects.get(username=request.user.username) # Get current user object
+    following = usrCurrent.follows.all() # List of people the current user is following
+    followingPosts = Post.objects.filter (author__in=following).order_by(F('datetime').asc()) # Get the posts from people user is following
+    return render(request, "network/following.html",{
+        "posts": followingPosts
+    })

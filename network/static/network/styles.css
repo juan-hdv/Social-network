@@ -5,7 +5,9 @@ textarea {
 small {
 	font-size: 0.7em;
 }
-
+ul {
+	/*list-style-type: none;*/
+}
 .body {
 	margin: 0 1em;
 }

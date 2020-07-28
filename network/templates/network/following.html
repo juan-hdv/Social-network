@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class=bordered>
+	<h2>Posts from people you follow</h2>
+	{% if posts %}
+	<ul>
+	{% for p in posts %}
+		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
+	{% endfor %}
+	</ul>
+	{% else %}
+		<br>
+		<strong>There are no posts.</strong>
+	{% endif %}
+</div>
+{% endblock %}
