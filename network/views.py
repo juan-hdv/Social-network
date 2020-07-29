@@ -1,20 +1,20 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, Error
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
-
+import json
 from .models import User, Post
 
 CONST_linesPerPage = 10
-
 def index(request):
     if request.user.is_authenticated:
         post = Post.objects.all()
         paginator = Paginator(post, CONST_linesPerPage) # Show  CONST_linesPerPage libes per page.
         return render(request, "network/index.html",{
+            "currentUsername" : request.user.username, 
             "page_obj": paginator.get_page(request.GET.get('page')),
             "numpages_plus_one": paginator.num_pages+1
         })
@@ -133,6 +133,21 @@ def following(request):
 
     paginator = Paginator(followingPosts, CONST_linesPerPage) # Show CONST_linesPerPage lines per page.
     return render(request, "network/following.html",{
+        "currentUsername" : request.user.username, 
         "page_obj": paginator.get_page(request.GET.get('page')),
         "numpages_plus_one": paginator.num_pages+1
     })
+
+def updatePost(request):
+    if request.is_ajax and request.method == "POST":
+        # En una solicitud ajax, la data viene en "request.body" no en "request.POST"!!!!
+        data = json.loads(request.body)
+        pid = data["id"]
+        pcontent = data["contents"]
+        try:
+            Post.objects.filter(id=pid).update(content=pcontent)
+            return JsonResponse({'message': f"Post saved successfully! {pid} & {pcontent}" })
+        except KeyError:
+            return JsonResponse({'message': "Key error!" })
+    else:
+        return render(request, "network/error.html", {"message": "Operation not allowed."})        

@@ -5,11 +5,10 @@
 {% block body %}
 <div class=bordered>
 	<h2 style="display: inline">New post</h2>&nbsp;&nbsp;(280 characters max.)
-    <form action="{% url 'newPost' %}" method="post">
+    <form id="newPost" action="{% url 'newPost' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
         	<textarea name="content"></textarea>
-
         </div>
         <input class="btn btn-primary" type="submit" value="Post">
     </form>
@@ -42,7 +41,25 @@
 	{% if page_obj %}
 	<ul>
 	{% for p in page_obj %}
-		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
+		<li>
+			<div>
+			{% if p.author.username == currentUsername %}
+				<span class="spanEdit" data-id="{{p.pk}}">Edit</span>&nbsp;
+				{{ p.author.username }} ({{ p.datetime }})
+				<div id="txt{{p.pk}}">
+				{{ p.content }} 
+				</div>
+				<input id="btn{{p.pk}}" class="btn btn-primary" type="button" value="Save" style="display: none">
+				likes({{ p.totallikes }})
+			{% else %}
+				{{ p.author.username }} ({{ p.datetime }})
+				<div>
+				[{{ p.content }}] 
+				</div>
+				likes({{ p.totallikes }})
+			{% endif %}
+			</div>
+		</li>
 	{% endfor %}
 	</ul>
 	{% else %}
