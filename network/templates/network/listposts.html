@@ -1,0 +1,61 @@
+{% extends "network/layout.html" %}
+{% load range %}
+
+{% block before_body %}
+{% endblock %}
+
+{% block body %}
+<div class=bordered>
+	<h2>{% block title_body %}{% endblock %}</h2>
+	
+	<nav aria-label="post navigation all">
+	  <ul class="pagination">
+	  	{% if page_obj.has_previous %}
+	    <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+	    {% else %}
+	    <li class="page-item disabled"> <span class="page-link">Previous</span></li>
+	    {% endif %}
+	    {% for k in 1|range:numpages_plus_one %}
+	  	    {% if k == page_obj.number %}
+		    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ k }}<span class="sr-only">(current)</span></a></li>
+		    {% else %}
+		    <li class="page-item"><a class="page-link" href="?page={{ k }}">{{ k }}</a></li>
+		    {% endif %}
+	    {% endfor %}
+        {% if page_obj.has_next %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><span class="page-link">Next</span></a></li>
+	    {% endif %}
+	  </ul>
+	</nav>	
+
+	{% if page_obj %}
+	<ul>
+	{% for p in page_obj %}
+		<li class="bordered">
+			<div>
+			{% if p.author.username == currentUsername %}
+				<span class="spanEdit" data-id="{{p.pk}}">Edit</span>&nbsp;
+				{{ p.author.username }} ({{ p.datetime }})
+				<div id="txt{{p.pk}}">
+				{{ p.content }} 
+				</div>
+				<input id="btn{{p.pk}}" class="btn btn-primary" type="button" value="Save" style="display: none">
+			{% else %}
+				{{ p.author.username }} ({{ p.datetime }})
+				<div>
+				[{{ p.content }}] 
+				</div>
+			{% endif %}
+				<i class="fas fa-thumbs-up likeIcon {% if p.pk in likes %}enabled{% else %}disabled{% endif %}" data-id="{{p.pk}}"></i>
+				&nbsp;<span id="likes{{p.pk}}" class="totalLikes">({{ p.totallikes }})</span>
+			</div>
+		</li>
+	{% endfor %}
+	</ul>
+	{% else %}
+	<strong>There are not posts.</strong>
+	{% endif %}
+</div>
+{% endblock %}

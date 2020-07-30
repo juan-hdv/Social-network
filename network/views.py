@@ -9,14 +9,20 @@ import json
 from .models import User, Post
 
 CONST_linesPerPage = 10
+
 def index(request):
     if request.user.is_authenticated:
-        post = Post.objects.all()
+        post = Post.objects.all().order_by(F('datetime').desc()) # All posts (with total likes)
         paginator = Paginator(post, CONST_linesPerPage) # Show  CONST_linesPerPage libes per page.
+
+        # Get the currentuser likes
+        usrCurrent = User.objects.get(username=request.user.username) # Get current user object
+
         return render(request, "network/index.html",{
             "currentUsername" : request.user.username, 
             "page_obj": paginator.get_page(request.GET.get('page')),
-            "numpages_plus_one": paginator.num_pages+1
+            "numpages_plus_one": paginator.num_pages+1,
+            "likes": [post.id for post in usrCurrent.likes.all()] # Current user likes
         })
     else:
         return HttpResponseRedirect(reverse("login"))
@@ -98,8 +104,8 @@ def profile(request):
         # Display info
         usrCurrent = User.objects.get(username=request.user.username) # Get current user object
         usrAll = User.objects.exclude(username=request.user.username) # Get users list, without current user
-        # usrCurrent.follows is the list of people the user follows / usrCurrent.user_set is the list of people followinh the user
-        numFollowers = usrCurrent.user_set.all().count() # Get number of followers of current user
+        # usrCurrent.follows is the list of people the user follows / usrCurrent.<Followers> is the list of people followinh the user
+        numFollowers = usrCurrent.followers.all().count() # Get number of followers of current user <user_set>=<Followers>
         followed = usrCurrent.follows.all()
         numFollowed = followed.count() # Get number of users the current user follows
         posts = Post.objects.filter (author=usrCurrent).order_by(F('datetime').desc()) # Get posts of current user; first the recentest        
@@ -130,23 +136,48 @@ def following(request):
     usrCurrent = User.objects.get(username=request.user.username) # Get current user object
     following = usrCurrent.follows.all() # List of people the current user is following
     followingPosts = Post.objects.filter (author__in=following).order_by(F('datetime').asc()) # Get the posts from people user is following
-
     paginator = Paginator(followingPosts, CONST_linesPerPage) # Show CONST_linesPerPage lines per page.
+
     return render(request, "network/following.html",{
         "currentUsername" : request.user.username, 
         "page_obj": paginator.get_page(request.GET.get('page')),
-        "numpages_plus_one": paginator.num_pages+1
+        "numpages_plus_one": paginator.num_pages+1,
+        "likes": [post.id for post in usrCurrent.likes.all()] # Current user likes
     })
 
 def updatePost(request):
     if request.is_ajax and request.method == "POST":
-        # En una solicitud ajax, la data viene en "request.body" no en "request.POST"!!!!
+        # Is an Ajax request and data comes in "request.body" not in "request.POST"!!!!
         data = json.loads(request.body)
         pid = data["id"]
         pcontent = data["contents"]
         try:
             Post.objects.filter(id=pid).update(content=pcontent)
             return JsonResponse({'message': f"Post saved successfully! {pid} & {pcontent}" })
+        except KeyError:
+            return JsonResponse({'message': "Key error!" })
+    else:
+        return render(request, "network/error.html", {"message": "Operation not allowed."})        
+
+def likePost(request):
+    if request.is_ajax and request.method == "POST":
+        usrCurrent = User.objects.get(username=request.user.username) # Get current user object
+        # Is an Ajax request and data comes in "request.body" not in "request.POST"!!!!
+        data = json.loads(request.body)
+        pid = data["id"]
+        boolLike = data["like"]
+        try:
+            post = Post.objects.get(id=pid) # Get the liked Post
+            usrCurrent.likes.remove(post) # Remove that post from user likes   
+            if boolLike: 
+                usrCurrent.likes.add(post) # Add that post to user likes if clicked
+            # Update total post likes
+            post.totallikes = post.totallikes + (1 if boolLike else -1)
+            post.save();
+            return JsonResponse({
+                'message': f"Like saved successfully! {pid} & {boolLike}",
+                "totallikes": post.totallikes 
+                })
         except KeyError:
             return JsonResponse({'message': "Key error!" })
     else:

@@ -1,42 +1,6 @@
-{% extends "network/layout.html" %}
+{% extends "network/listposts.html" %}
 
-{% load range %}
-
-{% block body %}
-<div class=bordered>
-	<h2>Posts from people you follow</h2>
-
-	<nav aria-label="post navigation all">
-	  <ul class="pagination">
-	  	{% if page_obj.has_previous %}
-	    <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-	    {% else %}
-	    <li class="page-item disabled"> <span class="page-link">Previous</span></li>
-	    {% endif %}
-	    {% for k in 1|range:numpages_plus_one %}
-	  	    {% if k == page_obj.number %}
-		    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ k }}<span class="sr-only">(current)</span></a></li>
-		    {% else %}
-		    <li class="page-item"><a class="page-link" href="?page={{ k }}">{{ k }}</a></li>
-		    {% endif %}
-	    {% endfor %}
-        {% if page_obj.has_next %}
-	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-	    {% else %}
-	    <li class="page-item disabled"><span class="page-link">Next</span></a></li>
-	    {% endif %}
-	  </ul>
-	</nav>	
-
-	{% if page_obj %}
-	<ul>
-	{% for p in page_obj %}
-		<li>{{ p.author.username }} ({{ p.datetime }}) [{{ p.content }}] likes({{ p.totallikes }})</li>
-	{% endfor %}
-	</ul>
-	{% else %}
-		<br>
-		<strong>There are no posts.</strong>
-	{% endif %}
-</div>
+{% block before_body %}
 {% endblock %}
+
+{% block title_body %}Posts from people you follow{% endblock %}

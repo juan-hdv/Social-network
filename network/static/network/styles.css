@@ -5,8 +5,8 @@ textarea {
 small {
 	font-size: 0.7em;
 }
-ul {
-	/*list-style-type: none;*/
+ul > li.bordered {
+	list-style-type: none;
 }
 .body {
 	margin: 0 1em;
@@ -15,7 +15,7 @@ ul {
 .bordered {
 	padding: 0.5em;
 	margin: 3px;
-	border: 1px solid gray;
+	border: 1px solid #bdc3c7;
 }
 
 span.spanEdit {
@@ -29,3 +29,98 @@ span.spanEdit {
   display: inline-block;
   cursor: pointer;
 }
+
+.likeIcon {
+  cursor: pointer;
+}
+.likeIcon.enabled {
+  color: #2874a6;;
+}
+.likeIcon.disabled {
+  color:#a6acaf;
+}
+.likeIcon:hover {
+  color:#f44336;
+}
+
+
+/*  Flat color palette (full) downloaded from
+ *  http://htmlcolorcodes.com/color-charts/
+ *
+ *  Check out our powerful color picker
+ *  http://htmlcolorcodes.com/color-picker/
+ *
+ *  Want to learn more about colors in SCSS?
+ *  http://htmlcolorcodes.com/tutorials/
+ *
+ *  - - - - - - - - - - - - - - - - - - 
+ *  Credits:
+ *
+ *  Original color palette by
+ *  http://designmodo.github.io/Flat-UI/
+ *
+  */
+/*
+.peter-river-300 {
+  color: #85c1e9; }
+
+.peter-river-400 {
+  color: #5dade2; }
+
+.peter-river-600 {
+  color: #2e86c1; }
+
+.plusButton {
+  color: #2874a6; }
+
+.peter-river-800 {
+  color: #21618c; }
+
+// Sunflower 
+.sunflower-50 {
+  color: #fef9e7; }
+
+.sunflower-100 {
+  color: #fcf3cf; }
+
+.sunflower-200 {
+  color: #f9e79f; }
+
+.sunflower-300 {
+  color: #f7dc6f; }
+
+.sunflower-400 {
+  color: #f4d03f; }
+
+.sunflower-500 {
+  color: #f1c40f; }
+
+.sunflower-600 {
+  color: #d4ac0d; }
+
+.sunflower-700 {
+  color: #b7950b; }
+
+.sunflower-900 {
+  color: #7d6608; }
+
+// Silver
+.silver-400 {
+  color: #cacfd2; }
+
+.silver-500 {
+  color: #bdc3c7; }
+
+.silver-600 {
+  color: #a6acaf; }
+
+.silver-700 {
+  color: #909497; }
+
+.silver-800 {
+  color: #797d7f; }
+*/
+
+/*  Want more? Check our our other color palettes at
+ *  http://htmlcolorcodes.com/color-charts/
+ */

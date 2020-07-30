@@ -1,8 +1,6 @@
-{% extends "network/layout.html" %}
+{% extends "network/listposts.html" %}
 
-{% load range %}
-
-{% block body %}
+{% block before_body %}
 <div class=bordered>
 	<h2 style="display: inline">New post</h2>&nbsp;&nbsp;(280 characters max.)
     <form id="newPost" action="{% url 'newPost' %}" method="post">
@@ -13,57 +11,6 @@
         <input class="btn btn-primary" type="submit" value="Post">
     </form>
 </div>
-<div class=bordered>
-	<h2>All posts</h2>
-	
-	<nav aria-label="post navigation all">
-	  <ul class="pagination">
-	  	{% if page_obj.has_previous %}
-	    <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-	    {% else %}
-	    <li class="page-item disabled"> <span class="page-link">Previous</span></li>
-	    {% endif %}
-	    {% for k in 1|range:numpages_plus_one %}
-	  	    {% if k == page_obj.number %}
-		    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ k }}<span class="sr-only">(current)</span></a></li>
-		    {% else %}
-		    <li class="page-item"><a class="page-link" href="?page={{ k }}">{{ k }}</a></li>
-		    {% endif %}
-	    {% endfor %}
-        {% if page_obj.has_next %}
-	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-	    {% else %}
-	    <li class="page-item disabled"><span class="page-link">Next</span></a></li>
-	    {% endif %}
-	  </ul>
-	</nav>	
-
-	{% if page_obj %}
-	<ul>
-	{% for p in page_obj %}
-		<li>
-			<div>
-			{% if p.author.username == currentUsername %}
-				<span class="spanEdit" data-id="{{p.pk}}">Edit</span>&nbsp;
-				{{ p.author.username }} ({{ p.datetime }})
-				<div id="txt{{p.pk}}">
-				{{ p.content }} 
-				</div>
-				<input id="btn{{p.pk}}" class="btn btn-primary" type="button" value="Save" style="display: none">
-				likes({{ p.totallikes }})
-			{% else %}
-				{{ p.author.username }} ({{ p.datetime }})
-				<div>
-				[{{ p.content }}] 
-				</div>
-				likes({{ p.totallikes }})
-			{% endif %}
-			</div>
-		</li>
-	{% endfor %}
-	</ul>
-	{% else %}
-	<strong>There are not posts.</strong>
-	{% endif %}
-</div>
 {% endblock %}
+{% block title_body %}All posts{% endblock %}
+
