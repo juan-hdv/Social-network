@@ -14,7 +14,7 @@ class User(AbstractUser):
 class Post(models.Model):
 # A Post is posted by a user in a datetime with given content
 	author = models.ForeignKey(User, on_delete=models.CASCADE) # One User relates to Many Posts
-	datetime = models.DateTimeField(auto_now=True, auto_now_add=False) # default=timezone.now
+	datetime = models.DateTimeField(auto_now=False, auto_now_add=True) # default=timezone.now
 	content = models.CharField(max_length=280) # Like twitter length
 	totallikes = models.IntegerField(default=0)
 
