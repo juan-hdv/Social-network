@@ -14,7 +14,7 @@
 	</div>
 	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-6">
 		<div class="bordered">
-			<h2>Users you follow</h2>
+			<h2>Check to follow / Uncheck to stop following</h2>
 			<form action="{% url 'profile' %}" method="post">
         		{% csrf_token %}
         		<div class="form-group">
@@ -28,7 +28,8 @@
         		<input class="btn btn-primary" type="submit" value="Update list">
         		<input name ="usrCurrent" value="{{ usrCurrent.username }}" hidden>
 		    </form>
-		    <h3>Followed</h3>
+		    <hr>
+		    <h3>Users you follow</h3>
 			{% for u in followed %}
 		    <ul>
 		    	<li>{{u.username}}</li>

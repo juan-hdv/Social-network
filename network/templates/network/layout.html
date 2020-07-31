@@ -51,6 +51,8 @@
             
             {% block body %}
             {% endblock %}
+            <!-- A hidden form to generate CSRF token - For pages not using forms--> 
+            <form type="hidden">{% csrf_token %}</form>            
         </div>
     </body>
 </html>

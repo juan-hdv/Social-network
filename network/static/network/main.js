@@ -72,15 +72,11 @@ function editPost (object) {
 	document.querySelector(`#btn${id}`).style.display = "block";
 } // editPost
 
-function updateTotalLikes (idPost, totallikes) {
-	let field = document.querySelector(`#likes${idPost}`).innerHTML = `(${totallikes})`;
-} // updateTotalLikes
-
 function likePost (object) {
 	// Get relevant data
 	let id = object.getAttribute('data-id');
 	let iclass = object.getAttribute('class');
-	var like = false; 
+	var like; 
 
 	if (iclass.search("enabled") != -1) {
 		iclass = iclass.replace("enabled","disabled");
@@ -110,8 +106,10 @@ function likePost (object) {
 		return response.json()
 	})
 	.then(resultJson => {
-	    updateTotalLikes (id, parseInt(resultJson.totallikes));
+		// Update Total Likes
+		document.querySelector(`#likes${id}`).innerHTML = `(${parseInt(resultJson.totallikes)})`;
 	    console.log(resultJson.message);
+	    console.log(`totallikes=${parseInt(resultJson.totallikes)}`);
 	})
 	.catch(function(error) {
     	console.log("Error", error);

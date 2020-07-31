@@ -12,11 +12,9 @@ CONST_linesPerPage = 10
 
 def index(request):
     if request.user.is_authenticated:
+        usrCurrent = User.objects.get(username=request.user.username) # Get current user object
         post = Post.objects.all().order_by(F('datetime').desc()) # All posts (with total likes)
         paginator = Paginator(post, CONST_linesPerPage) # Show  CONST_linesPerPage libes per page.
-
-        # Get the currentuser likes
-        usrCurrent = User.objects.get(username=request.user.username) # Get current user object
 
         return render(request, "network/index.html",{
             "currentUsername" : request.user.username, 
@@ -135,7 +133,7 @@ def profile(request):
 def following(request):
     usrCurrent = User.objects.get(username=request.user.username) # Get current user object
     following = usrCurrent.follows.all() # List of people the current user is following
-    followingPosts = Post.objects.filter (author__in=following).order_by(F('datetime').asc()) # Get the posts from people user is following
+    followingPosts = Post.objects.filter (author__in=following).order_by(F('datetime').desc()) # Get the posts from people user is following
     paginator = Paginator(followingPosts, CONST_linesPerPage) # Show CONST_linesPerPage lines per page.
 
     return render(request, "network/following.html",{
@@ -167,18 +165,19 @@ def likePost(request):
         pid = data["id"]
         boolLike = data["like"]
         try:
-            post = Post.objects.get(id=pid) # Get the liked Post
-            usrCurrent.likes.remove(post) # Remove that post from user likes   
-            if boolLike: 
-                usrCurrent.likes.add(post) # Add that post to user likes if clicked
-            # Update total post likes
-            post.totallikes = post.totallikes + (1 if boolLike else -1)
-            post.save();
-            return JsonResponse({
-                'message': f"Like saved successfully! {pid} & {boolLike}",
-                "totallikes": post.totallikes 
-                })
+            post = Post.objects.get(pk=pid) # Get the liked Post
         except KeyError:
             return JsonResponse({'message': "Key error!" })
+        usrCurrent.likes.remove(post) # Remove that post from user likes   
+        if boolLike: 
+            usrCurrent.likes.add(post) # Add that post to user likes if clicked
+       
+        # Update total post likes
+        post.totallikes = post.totallikes + (1 if boolLike else -1)
+        post.save();
+        return JsonResponse({
+            'message': f"Like saved successfully! {pid} & {boolLike}",
+            "totallikes": post.totallikes 
+            })
     else:
-        return render(request, "network/error.html", {"message": "Operation not allowed."})        
+        return render(request, "network/error.html", {"message": "Operation not allowed."})

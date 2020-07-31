@@ -35,15 +35,14 @@
 	{% for p in page_obj %}
 		<li class="bordered">
 			<div>
+				<strong>{{ p.author.username }}</strong> ({{ p.datetime }})
 			{% if p.author.username == currentUsername %}
 				<span class="spanEdit" data-id="{{p.pk}}">Edit</span>&nbsp;
-				{{ p.author.username }} ({{ p.datetime }})
 				<div id="txt{{p.pk}}">
 				{{ p.content }} 
 				</div>
 				<input id="btn{{p.pk}}" class="btn btn-primary" type="button" value="Save" style="display: none">
 			{% else %}
-				{{ p.author.username }} ({{ p.datetime }})
 				<div>
 				[{{ p.content }}] 
 				</div>
