@@ -1,0 +1,16 @@
+{% extends "network/listposts.html" %}
+
+{% block before_body %}
+<div class=bordered>
+	<h2 style="display: inline">New post</h2>&nbsp;&nbsp;(280 characters max.)
+    <form id="newPost" action="{% url 'newPost' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+        	<textarea name="content"></textarea>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Post">
+    </form>
+</div>
+{% endblock %}
+{% block title_body %}All posts{% endblock %}
+
