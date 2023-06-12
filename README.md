@@ -1,4 +1,4 @@
-# cs50-2020-project4 NETWORK
+# cs50-2020-project4 Social network
 
 ### Author/Date
 
@@ -9,7 +9,7 @@
 A Twitter-like social network website for making posts and following users.
 
 ### Technologies
-Python, JavaScript, HTML, and CSS.
+Python, Django, JavaScript, HTML, and CSS.
 
 ## PROJECT DETAILS
 ### General requirements implemented
